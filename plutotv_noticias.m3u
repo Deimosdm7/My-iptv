@@ -288,3 +288,6 @@ https://n1ottesorkatv.akamaized.net/hls/live/2113795/Live_1/index.m3u8
 https://d25usgadhphvwi.cloudfront.net/hls/main.m3u8
 #EXTINF:-1 tvg-name="CNN Portugal" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/CNN_Portugal.svg" group-title="Noticias em português",CNN Portugal
 https://raw.githubusercontent.com/thomraider12/canaistvpt/main/m3u8s/cnnpt.m3u8
+
+#EXTINF:-1 tvg-name="Noticias Telemundo AHORA" tvg-logo="https://image.xumo.com/v1/channels/channel/99951321/168x168.png?type=color_onBlack" group-title="notícias em espanhol",Noticias Telemundo AHORA
+https://xumo-xumoent-ch827-uj0ch.fast.nbcuni.com/live/master.m3u8
