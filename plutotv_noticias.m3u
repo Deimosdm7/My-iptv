@@ -293,3 +293,10 @@ https://raw.githubusercontent.com/thomraider12/canaistvpt/main/m3u8s/cnnpt.m3u8
 https://xumo-xumoent-ch827-uj0ch.fast.nbcuni.com/live/master.m3u8
 #EXTINF:-1 tvg-name="RAI News 24" tvg-logo="https://i.imgur.com/n2u57y3.png" group-title="notícias em italiano",RAI News 24
 https://d3k8wzt41aflvx.cloudfront.net/RAINEWS24/Live.m3u8
+
+#EXTINF:-1 tvg-name="TVI" group-title="TV aberta",TVI
+https://raw.githubusercontent.com/thomraider12/canaistvpt/main/m3u8s/tvi.m3u8
+#EXTINF:-1 tvg-name="RTP 1" group-title="TV aberta",RTP 1
+https://streaming-live.rtp.pt/liverepeater/smil:rtp1HD.smil/playlist.m3u8
+#EXTINF:-1 tvg-name="RTP Notícias" group-title="Noticias em português",RTP Notícias
+https://streaming-live.rtp.pt/livetvhlsDVR/rtpnHDdvr.smil/playlist.m3u8
