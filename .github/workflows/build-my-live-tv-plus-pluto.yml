@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download and filter news channels
+      - name: Download and combine original channels plus Pluto news
         run: |
           set -e
           curl -L --fail --retry 3 -o my_live_tv_source.m3u "https://raw.githubusercontent.com/Deimosdm7/My-iptv/main/my_live_tv.m3u"
@@ -28,36 +28,42 @@ jobs:
           import re
           from pathlib import Path
 
-          # Keep news networks and dedicated news channels; exclude general entertainment channels.
           news = re.compile(
               r"news|not[ií]cias|noticias|cnn|euronews|sky\s*news|rai\s*news|fox\s*channel",
               re.IGNORECASE
           )
 
-          output = ["#EXTM3U\n"]
-          for filename in ("my_live_tv_source.m3u", "pluto_all.m3u"):
+          def blocks(filename):
               lines = Path(filename).read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
-              blocks = []
-              current = []
+              result, current = [], []
               for line in lines:
                   if line.lstrip().startswith("#EXTINF:"):
                       if current:
-                          blocks.append(current)
+                          result.append(current)
                       current = [line]
                   elif current:
                       current.append(line)
               if current:
-                  blocks.append(current)
+                  result.append(current)
+              return result
 
-              for block in blocks:
-                  if news.search(block[0]):
-                      output.extend(block)
+          # Preserve every channel in the user's original list, including the "Canais" section.
+          output = ["#EXTM3U\n"]
+          output.extend(line for block in blocks("my_live_tv_source.m3u") for line in block)
+
+          # From Pluto, append only channels identified as news.
+          output.extend(
+              line
+              for block in blocks("pluto_all.m3u")
+              if news.search(block[0])
+              for line in block
+          )
 
           Path("my_live_tv_plus_pluto.m3u").write_text("".join(output), encoding="utf-8")
           PY
           rm -f my_live_tv_source.m3u pluto_all.m3u
 
-      - name: Commit filtered playlist
+      - name: Commit combined playlist
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -66,5 +72,5 @@ jobs:
             echo "No changes."
             exit 0
           fi
-          git commit -m "Keep only news channels in My Live TV + Pluto"
+          git commit -m "Preserve original channels and add Pluto news only"
           git push
