@@ -1,6 +1,10 @@
 name: Build My Live TV + Pluto
 
 on:
+  push:
+    paths:
+      - ".github/workflows/build-my-live-tv-plus-pluto.yml"
+      - "my_live_tv.m3u"
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
