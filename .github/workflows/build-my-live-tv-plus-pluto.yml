@@ -1,0 +1,40 @@
+name: Build My Live TV + Pluto
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Merge playlists
+        run: |
+          set -e
+          curl -L --fail --retry 3 -o my_live_tv_source.m3u "https://raw.githubusercontent.com/Deimosdm7/My-iptv/main/my_live_tv.m3u"
+          curl -L --fail --retry 3 -o pluto_all.m3u "https://raw.githubusercontent.com/BuddyChewChew/pluto/refs/heads/main/pluto_all.m3u"
+          {
+            echo "#EXTM3U"
+            grep -v -E '^#EXTM3U$' my_live_tv_source.m3u
+            grep -v -E '^#EXTM3U$' pluto_all.m3u
+          } > my_live_tv_plus_pluto.m3u
+          rm -f my_live_tv_source.m3u pluto_all.m3u
+
+      - name: Commit merged playlist
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add my_live_tv_plus_pluto.m3u
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -m "Update My Live TV + Pluto playlist"
+          git push
