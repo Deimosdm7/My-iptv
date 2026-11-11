@@ -11,7 +11,7 @@ https://streaming-live.rtp.pt/livetvhlsDVR/rtpnHDdvr.smil/playlist.m3u8
 https://raw.githubusercontent.com/thomraider12/canaistvpt/main/m3u8s/tvi.m3u8
 #EXTINF:-1 tvg-name="Newsmax Español" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/Newsmax_TV_Logo.png" group-title="Canais",Newsmax Español
 https://n1ottesorkatv.akamaized.net/hls/live/2113795/Live_1/index.m3u8
-#EXTINF:-1 tvg-name="FOX Channel" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/Fox_News_Channel_logo.png" group-title="Canais",FOX Channel
+#EXTINF:-1 tvg-name="FOX Channel" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/Fox_News_Channel_logo.svg" group-title="Canais",FOX Channel
 https://tvsen6.aynaott.com/foxnews/index.m3u8
 #EXTINF:-1 tvg-name="RAI News" tvg-logo="https://i.imgur.com/n2u57y3.png" group-title="Canais",RAI News
 https://d3k8wzt41aflvx.cloudfront.net/RAINEWS24/Live.m3u8
