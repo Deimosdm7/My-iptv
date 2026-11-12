@@ -28,7 +28,7 @@ jobs:
 
           source = Path("pluto_all.m3u").read_text(encoding="utf-8", errors="replace").splitlines()
           include = re.compile(
-              r"news|not[ií]cias|euronews|bloomberg|weather|cnn|cbs en español|"
+              r"news|not[ií]cias|euronews|bloomberg|weather|cnn|cnbc|times brasil|cbs en español|"
               r"the first$|blaze live|america'?s voice|oan plus|salem news|"
               r"livenow|live now|today all day|record news|jovem pan|bm&c|fox local",
               re.IGNORECASE
