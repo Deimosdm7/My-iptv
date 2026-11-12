@@ -1,4 +1,6 @@
 #EXTM3U
+#EXTINF:-1 tvg-name="CNBC" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/CNBC_logo.svg" group-title="Notícias em inglês",CNBC
+https://amg01079-nbcuuk-amg01079c2-samsung-gb-1258.playouts.now.amagi.tv/playlist.m3u8
 #PLAYLIST:My Live TV
 #EXTINF:-1 tvg-name="CNN Brasil" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/CNN_Brasil_(red_background).svg" group-title="Canais",CNN Brasil
 https://d25usgadhphvwi.cloudfront.net/hls/main.m3u8
