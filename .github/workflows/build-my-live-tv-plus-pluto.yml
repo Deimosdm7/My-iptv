@@ -1,9 +1,10 @@
-name: Sync Pluto News Opinion
+name: Sync My Live TV + Pluto BR
 
 on:
   push:
     paths:
       - ".github/workflows/build-my-live-tv-plus-pluto.yml"
+      - "my_live_tv.m3u"
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
@@ -18,64 +19,86 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download Pluto playlist and keep news and opinion channels only
+      - name: Build combined playlist
         run: |
           set -euo pipefail
-          curl -L --fail --retry 3 --retry-delay 5 -o pluto_all.m3u "https://raw.githubusercontent.com/BuddyChewChew/pluto/refs/heads/main/pluto_all.m3u"
+          curl -L --fail --retry 3 --retry-delay 5 -o my_live_tv_source.m3u "https://raw.githubusercontent.com/Deimosdm7/My-iptv/main/my_live_tv.m3u"
+          curl -L --fail --retry 3 --retry-delay 5 -o pluto_br.m3u "https://raw.githubusercontent.com/BuddyChewChew/pluto/refs/heads/main/pluto_br.m3u"
+
           python3 - <<'PY'
           import re
           from pathlib import Path
 
-          source = Path("pluto_all.m3u").read_text(encoding="utf-8", errors="replace").splitlines()
-          include = re.compile(
-              r"news|not[ií]cias|euronews|bloomberg|weather|cnn|cnbc|times brasil|cbs en español|"
-              r"the first$|blaze live|america'?s voice|oan plus|salem news|"
-              r"livenow|live now|today all day|record news|jovem pan|bm&c|fox local",
-              re.IGNORECASE
-          )
-          exclude = re.compile(r"fox sports|cbs sports|the first 48|cnn originals", re.IGNORECASE)
+          def parse_blocks(path):
+              lines = Path(path).read_text(encoding="utf-8", errors="replace").splitlines()
+              blocks = []
+              current = []
+              for line in lines:
+                  if line.startswith("#EXTINF:"):
+                      if current:
+                          blocks.append(current)
+                      current = [line]
+                  elif current:
+                      current.append(line)
+              if current:
+                  blocks.append(current)
+              return blocks
 
-          blocks = []
-          current = []
-          for line in source:
-              if line.startswith("#EXTINF:"):
-                  if current:
-                      blocks.append(current)
-                  current = [line]
-              elif current:
-                  current.append(line)
-          if current:
-              blocks.append(current)
+          original_groups = {
+              "RTP 1": "TV Portuguesa",
+              "TVI": "TV Portuguesa",
+          }
+
+          original_news = {
+              "CNBC", "CNN Brasil", "CNN Portugal", "RTP Notícias",
+              "Newsmax Español", "FOX Channel", "RAI News", "SIC Notícias",
+              "Euronews EN", "Sky News", "CNN International", "NBC News Now",
+              "Noticias Telemundo Ahora",
+          }
+
+          def normalize_original(block):
+              extinf = block[0]
+              name = extinf.rsplit(",", 1)[-1].strip()
+              group = original_groups.get(name, "News Opinion" if name in original_news else None)
+              if group:
+                  if 'group-title="' in extinf:
+                      extinf = re.sub(r'group-title="[^"]*"', f'group-title="{group}"', extinf)
+                  else:
+                      extinf = extinf.replace("#EXTINF:", f'#EXTINF:-1 group-title="{group}" ', 1)
+                  block = [extinf] + block[1:]
+              return block
 
           output = ["#EXTM3U\n"]
           seen = set()
-          for block in blocks:
-              extinf = block[0]
-              name = extinf.rsplit(",", 1)[-1].strip()
-              if not include.search(name) or exclude.search(name):
-                  continue
-              if not any(line.startswith("http") for line in block[1:]):
-                  continue
 
+          for block in parse_blocks("my_live_tv_source.m3u"):
+              block = normalize_original(block)
+              extinf = block[0]
               id_match = re.search(r'tvg-id="([^"]+)"', extinf)
-              key = ((id_match.group(1) if id_match else name), name.casefold())
+              name = extinf.rsplit(",", 1)[-1].strip()
+              key = ("original", id_match.group(1) if id_match else name.casefold(), name.casefold())
               if key in seen:
                   continue
               seen.add(key)
+              output.append(extinf.rstrip() + "\n")
+              output.extend(line.rstrip() + "\n" for line in block[1:])
 
-              extinf = re.sub(r'group-title="[^"]*"', 'group-title="News Opinion"', extinf)
-              if 'group-title=' not in extinf:
-                  extinf = extinf.replace("#EXTINF:", '#EXTINF:-1 group-title="News Opinion" ', 1)
-              output.append(extinf.rstrip("\r\n") + "\n")
-              output.extend(line.rstrip("\r\n") + "\n" for line in block[1:])
-
-          if len(output) == 1:
-              raise SystemExit("No news/opinion channels were found; keeping the existing playlist unchanged.")
+          for block in parse_blocks("pluto_br.m3u"):
+              extinf = block[0]
+              id_match = re.search(r'tvg-id="([^"]+)"', extinf)
+              name = extinf.rsplit(",", 1)[-1].strip()
+              key = ("pluto", id_match.group(1) if id_match else name.casefold(), name.casefold())
+              if key in seen:
+                  continue
+              seen.add(key)
+              output.append(extinf.rstrip() + "\n")
+              output.extend(line.rstrip() + "\n" for line in block[1:])
 
           Path("my_live_tv_plus_pluto.m3u").write_text("".join(output), encoding="utf-8")
-          print(f"Prepared {len(seen)} news/opinion channels in News Opinion.")
+          print(f"Built {len(seen)} channels: original + Pluto BR.")
           PY
-          rm -f pluto_all.m3u
+
+          rm -f my_live_tv_source.m3u pluto_br.m3u
 
       - name: Commit updated playlist
         run: |
@@ -83,8 +106,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add my_live_tv_plus_pluto.m3u
           if git diff --cached --quiet; then
-            echo "No changes in Pluto news/opinion channels."
+            echo "No playlist changes."
             exit 0
           fi
-          git commit -m "Sync Pluto News Opinion playlist"
+          git commit -m "Sync My Live TV with Pluto BR"
           git push
