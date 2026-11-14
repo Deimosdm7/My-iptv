@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/build-my-live-tv-plus-pluto.yml"
       - "my_live_tv.m3u"
+      - "news_opinion_custom.m3u"
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
@@ -53,7 +54,7 @@ jobs:
               "CNBC", "CNN Brasil", "CNN Portugal", "RTP Notícias",
               "Newsmax Español", "FOX Channel", "RAI News", "SIC Notícias",
               "Euronews EN", "Sky News", "CNN International", "NBC News Now",
-              "Noticias Telemundo Ahora",
+              "Noticias Telemundo Ahora", "Digi24", "Antena 3",
           }
 
           def normalize_original(block):
@@ -71,12 +72,26 @@ jobs:
           output = ["#EXTM3U\n"]
           seen = set()
 
+          # Manual News Opinion channels are added first so automatic source
+          # updates cannot remove or replace them.
+          for block in parse_blocks("news_opinion_custom.m3u"):
+              block = normalize_original(block)
+              extinf = block[0]
+              id_match = re.search(r'tvg-id="([^"]+)"', extinf)
+              name = extinf.rsplit(",", 1)[-1].strip()
+              key = ("manual", id_match.group(1) if id_match else name.casefold(), name.casefold())
+              if key in seen:
+                  continue
+              seen.add(key)
+              output.append(extinf.rstrip() + "\n")
+              output.extend(line.rstrip() + "\n" for line in block[1:])
+
           for block in parse_blocks("my_live_tv_source.m3u"):
               block = normalize_original(block)
               extinf = block[0]
               id_match = re.search(r'tvg-id="([^"]+)"', extinf)
               name = extinf.rsplit(",", 1)[-1].strip()
-              key = ("original", id_match.group(1) if id_match else name.casefold(), name.casefold())
+              key = ("channel", id_match.group(1) if id_match else name.casefold(), name.casefold())
               if key in seen:
                   continue
               seen.add(key)
@@ -95,7 +110,7 @@ jobs:
               output.extend(line.rstrip() + "\n" for line in block[1:])
 
           Path("my_live_tv_plus_pluto.m3u").write_text("".join(output), encoding="utf-8")
-          print(f"Built {len(seen)} channels: original + Pluto BR.")
+          print(f"Built {len(seen)} channels: manual + original + Pluto BR.")
           PY
 
           rm -f my_live_tv_source.m3u pluto_br.m3u
