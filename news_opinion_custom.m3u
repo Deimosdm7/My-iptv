@@ -1,0 +1,37 @@
+#EXTM3U
+# Canais adicionados manualmente — preservados nas atualizações automáticas
+#EXTINF:-1 tvg-name="CNBC" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/CNBC_2025.svg" group-title="News Opinion",CNBC
+https://tx1.nexgen.bz/CNBC/index.m3u8
+#EXTINF:-1 tvg-name="CNN Brasil" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/CNN_Brasil_(red_background).svg" group-title="News Opinion",CNN Brasil
+https://d25usgadhphvwi.cloudfront.net/hls/main.m3u8
+#EXTINF:-1 tvg-name="CNN Portugal" tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/CNN_Portugal.svg/500px-CNN_Portugal.svg.png" group-title="News Opinion",CNN Portugal
+https://raw.githubusercontent.com/thomraider12/canaistvpt/main/m3u8s/cnnpt.m3u8
+#EXTINF:-1 tvg-name="RTP Notícias" tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/RTP_Not%C3%ADcias_2026.svg/960px-RTP_Not%C3%ADcias_2026.svg.png" group-title="News Opinion",RTP Notícias
+https://streaming-live.rtp.pt/livetvhlsDVR/rtpnHDdvr.smil/playlist.m3u8
+#EXTINF:-1 tvg-name="Newsmax Español" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/Newsmax_TV_Logo.png" group-title="News Opinion",Newsmax Español
+https://n1ottesorkatv.akamaized.net/hls/live/2113795/Live_1/index.m3u8
+#EXTINF:-1 tvg-name="FOX Channel" tvg-logo="https://commons.wikimedia.org/wiki/Special:FilePath/Fox_News_Channel_logo.svg" group-title="News Opinion",FOX Channel
+https://tvsen6.aynaott.com/foxnews/index.m3u8
+#EXTINF:-1 tvg-name="RAI News" tvg-logo="https://i.imgur.com/n2u57y3.png" group-title="News Opinion",RAI News
+https://d3k8wzt41aflvx.cloudfront.net/RAINEWS24/Live.m3u8
+#EXTINF:-1 tvg-id="SICNoticias.pt" tvg-logo="https://raw.githubusercontent.com/LITUATUI/M3UPT/main/logos/SICNoticias.pt.png" group-title="News Opinion",SIC Notícias
+#EXTVLCOPT:http-user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:152.0) Gecko/20100101 Firefox/152.0"
+#EXTVLCOPT:http-origin=https://sicnoticias.pt
+#EXTVLCOPT:http-referrer=https://sicnoticias.pt/
+https://sicnot.live.impresa.pt/sicnot.m3u8
+#EXTINF:-1 tvg-id="EuronewsEnglish.fr" tvg-logo="https://raw.githubusercontent.com/LITUATUI/M3UPT/main/logos/Euronews.png" group-title="News Opinion",Euronews EN
+https://a-cdn.klowdtv.com/live3/euronews_720p/playlist.m3u8
+#EXTINF:-1 tvg-id="SkyNewsInternational.uk" tvg-logo="https://raw.githubusercontent.com/LITUATUI/M3UPT/main/logos/SkyNewsInternational.uk.png" group-title="News Opinion",Sky News
+http://linear901-oo-hls0-prd-gtm.delivery.skycdp.com/v1/master/6404a5d732e04991ed59ac7790b61cc065c9aabd/prod-gb-lin-skynews-hls-25-web/master.m3u8
+#EXTINF:-1 tvg-id="CNNInternational.us" tvg-logo="https://raw.githubusercontent.com/LITUATUI/M3UPT/main/logos/CNNInternational.us.png" group-title="News Opinion",CNN International
+https://d3bp6dwmpbdajl.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-ury0meh5m4nzm/index.m3u8
+#EXTINF:-1 tvg-id="NBCNewsNOW.us" tvg-logo="https://raw.githubusercontent.com/LITUATUI/M3UPT/main/logos/NBCNewsNOW.us.png" group-title="News Opinion",NBC News Now
+#KODIPROP:inputstream.adaptive.license_type=org.w3.clearkey
+#KODIPROP:inputstream.adaptive.license_key=52e6281b1d3c364c872497e8058977b1:11d6e9a2abb2e241804148713531f64d
+https://live-oneapp-prd-news.akamaized.net/Content/CMAF_OL2-CTR-4s/Live/channel(nnn)/master.mpd
+#EXTINF:-1 tvg-id="99951321" tvg-name="Noticias Telemundo Ahora" tvg-logo="https://image.xumo.com/v1/channels/channel/99951321/168x168.png?type=color_onBlack" group-title="News Opinion",Noticias Telemundo Ahora
+https://d4whmvwm0rdvi.cloudfront.net/10007/99951321/hls/master.m3u8?includeAssetTags=true&ads.xumo_channelId=99951321&ads.xumo_streamId=99951321&ads.channelId=99951321&ads.asnw=169843&ads.afid=380752915&ads.sfid=19647824&ads.csid=xumo_web_TelemundoNoticiasAhora_ssai_cro&ads._fw_coppa=0&ads.xumo_contentId=3944&ads.xumo_contentName=TelemundoNoticiasAhora&ads.xumo_providerId=3944&ads.xumo_providerName=TelemundoNoticiasAhora&ads.caid=&ads._fw_is_lat=0&ads._fw_us_privacy=&ads._fw_did=29d0cd93-d986-4eb8-9b3d-e91be5e5b5bb&ads._fw_vcid2=512116:29d0cd93-d986-4eb8-9b3d-e91be5e5bb&ads._fw_app_bundle=&ads._fw_app_store_url=&ads._fw_deviceMake=&ads._fw_device_model=&ads._fw_deviceType=3-Connected_TV&ads.appVersion=1.0.0&ads._fw_ifa_type=&ads.appName=XumoPlay&ads._fw_content_category=&ads._fw_content_genre=&ads._fw_content_language=en&ads._fw_content_rating=
+#EXTINF:-1 tvg-name="Digi24" tvg-logo="https://i.imgur.com/qmRnD0M.png" group-title="News Opinion",Digi24
+https://edge-ar.rcs-rds.ro/digi24ar/hd.m3u8
+#EXTINF:-1 tvg-name="Antena 3" tvg-logo="https://static.wikia.nocookie.net/logopedia/images/8/82/Antena_3_CNN_2022_v1.png/revision/latest/scale-to-width-down/512" group-title="News Opinion",Antena 3
+https://live3vox.antenaplay.ro/a3free/a3free.m3u8
