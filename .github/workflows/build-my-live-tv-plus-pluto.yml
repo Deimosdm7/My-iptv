@@ -102,6 +102,16 @@ jobs:
               extinf = block[0]
               id_match = re.search(r'tvg-id="([^"]+)"', extinf)
               name = extinf.rsplit(",", 1)[-1].strip()
+
+              # Pluto marks its news channels with group-title="Notícias".
+              # Always map Pluto news channels to News Opinion so they survive
+              # every automatic refresh of the combined playlist.
+              pluto_group = re.search(r'group-title="([^"]*)"', extinf)
+              if pluto_group and pluto_group.group(1).strip().casefold() in {
+                  "notícias", "noticias", "news", "news & opinion", "news opinion"
+              }:
+                  extinf = re.sub(r'group-title="[^"]*"', 'group-title="News Opinion"', extinf)
+
               key = ("pluto", id_match.group(1) if id_match else name.casefold(), name.casefold())
               if key in seen:
                   continue
@@ -124,5 +134,5 @@ jobs:
             echo "No playlist changes."
             exit 0
           fi
-          git commit -m "Sync My Live TV with Pluto BR"
+          git commit -m "Sync My Live TV with Pluto BR and preserve Pluto news category"
           git push
