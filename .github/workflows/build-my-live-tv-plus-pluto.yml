@@ -25,6 +25,7 @@ jobs:
           set -euo pipefail
           curl -L --fail --retry 3 --retry-delay 5 -o my_live_tv_source.m3u "https://raw.githubusercontent.com/Deimosdm7/My-iptv/main/my_live_tv.m3u"
           curl -L --fail --retry 3 --retry-delay 5 -o pluto_br.m3u "https://raw.githubusercontent.com/BuddyChewChew/pluto/refs/heads/main/pluto_br.m3u"
+          curl -L --fail --retry 3 --retry-delay 5 -o pluto_all.m3u "https://raw.githubusercontent.com/BuddyChewChew/pluto/refs/heads/main/pluto_all.m3u"
 
           python3 - <<'PY'
           import re
@@ -98,21 +99,55 @@ jobs:
               output.append(extinf.rstrip() + "\n")
               output.extend(line.rstrip() + "\n" for line in block[1:])
 
+          # Keep the normal Pluto BR channels.
           for block in parse_blocks("pluto_br.m3u"):
               extinf = block[0]
               id_match = re.search(r'tvg-id="([^"]+)"', extinf)
               name = extinf.rsplit(",", 1)[-1].strip()
-
-              # Pluto marks its news channels with group-title="Notícias".
-              # Always map Pluto news channels to News Opinion so they survive
-              # every automatic refresh of the combined playlist.
-              pluto_group = re.search(r'group-title="([^"]*)"', extinf)
-              if pluto_group and pluto_group.group(1).strip().casefold() in {
-                  "notícias", "noticias", "news", "news & opinion", "news opinion"
-              }:
-                  extinf = re.sub(r'group-title="[^"]*"', 'group-title="News Opinion"', extinf)
-
               key = ("pluto", id_match.group(1) if id_match else name.casefold(), name.casefold())
+              if key in seen:
+                  continue
+              seen.add(key)
+              output.append(extinf.rstrip() + "\n")
+              output.extend(line.rstrip() + "\n" for line in block[1:])
+
+          # Add ALL news channels found in Pluto's international list.
+          # Pluto may use different language/category labels, so classify
+          # common news group names and news keywords as News Opinion.
+          news_groups = {
+              "notícias", "noticias", "news", "news & opinion", "news opinion",
+              "news + opinion", "actualités", "nachrichten", "notizie",
+              "noticias y opinión", "noticias y opinion"
+          }
+          news_keywords = re.compile(
+              r'\b(news|noticias|notícia|noticias y opinión|notizie|nachrichten|'
+              r'actualités|euronews|cnbc|cnn|fox news|bbc news|sky news|'
+              r'al jazeera|msnbc|abc news|cbs news|nbc news|reuters|'
+              r'bloomberg|telemundo|univision)\b', re.I
+          )
+
+          for block in parse_blocks("pluto_all.m3u"):
+              extinf = block[0]
+              name = extinf.rsplit(",", 1)[-1].strip()
+              pluto_group = re.search(r'group-title="([^"]*)"', extinf)
+              group = pluto_group.group(1).strip().casefold() if pluto_group else ""
+              if group not in news_groups and not news_keywords.search(name):
+                  continue
+
+              extinf = re.sub(
+                  r'group-title="[^"]*"',
+                  'group-title="News Opinion"',
+                  extinf
+              )
+              if 'group-title="' not in extinf:
+                  extinf = extinf.replace(
+                      "#EXTINF:",
+                      '#EXTINF:-1 group-title="News Opinion" ',
+                      1
+                  )
+
+              id_match = re.search(r'tvg-id="([^"]+)"', extinf)
+              key = ("pluto-news", id_match.group(1) if id_match else name.casefold(), name.casefold())
               if key in seen:
                   continue
               seen.add(key)
@@ -123,7 +158,7 @@ jobs:
           print(f"Built {len(seen)} channels: manual + original + Pluto BR.")
           PY
 
-          rm -f my_live_tv_source.m3u pluto_br.m3u
+          rm -f my_live_tv_source.m3u pluto_br.m3u pluto_all.m3u
 
       - name: Commit updated playlist
         run: |
